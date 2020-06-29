@@ -14,3 +14,6 @@ router.get('/register', function (req, res) {
 
 // login get route
 // login post route 
+
+// call on a router 
+module.exports = router

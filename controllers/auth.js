@@ -12,11 +12,11 @@ const passport = require('../config/ppConfig')
 
 // ROUTES
 // register get route 
-router.get('/register', function (req, res) {
+router.get('/register', function(req, res) {
     res.render('auth/register')
 })
 // register post route 
-router.post('/register', (req, res) => {
+router.post('/register', function(req, res) {
     db.user.findOrCreate({
         where: {
             email: req.body.email
@@ -30,7 +30,11 @@ router.post('/register', (req, res) => {
         if (created) {
             // authenticate user and start authorization process
             console.log('user is created')
-            res.redirect('/')
+            passport.authenticate('local', {
+                successRedirect: '/',
+                successFlash: 'Thanks for registering!'
+            })(req, res)
+            // res.redirect('/')
         } else {
             console.log('User email already exists!')
             req.flash('error', 'Error: email already exists for user. Try again')
@@ -69,7 +73,7 @@ router.post('/login', function(req, res, next) {
             // built in function in express
         }
         // built into passport 
-        req.login(function(user, error) {
+        req.login(user, function(error) {
             // if error move to error 
             if (error) next(error)
             // single line function - can also use { } to open up
@@ -80,7 +84,7 @@ router.post('/login', function(req, res, next) {
                 return res.redirect('/')
             })
         })
-    })
+    })(req, res, next)
 })
 
 router.post('/login', passport.authenticate('local', {

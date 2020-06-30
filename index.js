@@ -45,7 +45,7 @@ app.use(session({
     secret: process.env.SESSION_SECRET,
     store: sessionStore,
     resave: false,
-    saveUnitialized: true
+    saveUninitialized: true
 }))
 
 sessionStore.sync()

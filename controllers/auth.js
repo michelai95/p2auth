@@ -47,27 +47,37 @@ router.post('/register', (req, res) => {
 })
 
 // login get route
-router.get('/login', (req, res) => {
+router.get('/login', function(req, res) {
     res.render('auth/login');
   })
 // login post route 
 // add next param to pass to function
-router.post('/login', function(req, res) {
+router.post('/login', function(req, res, next) {
     passport.authenticate('local', function(error, user, info) {
         // takes three paramaters 
         if (!user) {
             req.flash('error', 'Invalid username or password')
             // save to our user session no username
             // redirect our user to try logging in again
+            req.session.save(function() {
+                return res.redirect('/auth/login')
+            })
         }
         if (error) {
-            return error
+            return next(error)
+            // built in function in express
         }
         // built into passport 
         req.login(function(user, error) {
             // if error move to error 
+            if (error) next(error)
+            // single line function - can also use { } to open up
             // if success flash success message
+            req.flash('success', 'You are validated and logged in')
             // if success save session and redirect user
+            req.session.save(function() {
+                return res.redirect('/')
+            })
         })
     })
 })

@@ -15,6 +15,8 @@ passport.deserializeUser(function(id, cb) {
     }).catch(callback)
 })
 
+// transport information from database, to server, from server to front end 
+
 // configure local variables/settings
 
 // password local config

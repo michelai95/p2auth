@@ -11,6 +11,13 @@ const helmet = require('helmet')
 // express sessions/sequelize sessions 
 const session = require('express-session')
 const flash = require('flash')
+const passport = require('./config/ppConfig')
+const db = require('./models')
+
+// want to add link to custom middleware 
+// check to see if the user has logged in or not 
+// use session library to allow us to store session data 
+const SequelizeStore = require('connect-session-sequelize')(session.Store)
 
 // app setup
 const app = Express()
@@ -24,6 +31,40 @@ app.use(ejsLayouts)
 app.use(require('morgan')('dev'))
 app.use(helmet())
 
+
+// create new instance of class Sequelize Store 
+const sessionStore = new SequelizeStore({
+    db: db.sequelize,
+    expiration: 1000 * 60 * 30
+    // make it per minute * 30 is for 30 minutes 
+})
+
+// declare attributes our session is going to have 
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    store: sessionStore,
+    resave: false,
+    saveUnitialized: true
+}))
+
+sessionStore.sync()
+// has to be invoked to run the above function 
+
+// initialize and link flash messages, passport, and session
+app.use(passport.initialize())
+app.use(passport.session())
+app.use(flash())
+
+app.use(function(req, res, next) {
+    // next takes us to the next related route 
+    res.locals.alert = req.flash()
+    res.locals.currentUser = req.user
+
+    next()
+    // sends it to the next route - hook up flash and hook up our user 
+})
+
+// ROUTES
 
 app.get('/', (req, res) => {
     // check to see if user has logged in

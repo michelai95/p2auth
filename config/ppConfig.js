@@ -16,6 +16,7 @@ passport.deserializeUser(function(id, cb) {
 })
 
 // configure local variables/settings
+
 // password local config
 passport.use(new LocalStrategy({
     usernameField: 'email',

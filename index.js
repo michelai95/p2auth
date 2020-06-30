@@ -13,6 +13,7 @@ const session = require('express-session')
 const flash = require('flash')
 const passport = require('./config/ppConfig')
 const db = require('./models')
+const isLoggedIn = require('./middleware/isLoggedIn')
 
 // want to add link to custom middleware 
 // check to see if the user has logged in or not 
@@ -59,17 +60,24 @@ app.use(function(req, res, next) {
     // next takes us to the next related route 
     res.locals.alert = req.flash()
     res.locals.currentUser = req.user
-
+    
+    // runs this function every time the route is hit 
+    // since it's middleware it'll stop before running again
+    // next prompts it to move onto the next task/function
     next()
     // sends it to the next route - hook up flash and hook up our user 
 })
 
 // ROUTES
 
-app.get('/', (req, res) => {
+app.get('/', function(req, res) {
     // check to see if user has logged in
     // renders the index page 
     res.render('index')
+})
+
+app.get('/profile', isLoggedIn, function(req, res) {
+    res.render('profile', {test: "another test"})
 })
 
 // include auth controller

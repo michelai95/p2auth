@@ -31,7 +31,7 @@ router.post('/register', function(req, res) {
             // authenticate user and start authorization process
             console.log('user is created')
             passport.authenticate('local', {
-                successRedirect: '/',
+                successRedirect: '/profile',
                 successFlash: 'Thanks for registering!'
             })(req, res)
             // res.redirect('/')
@@ -64,9 +64,8 @@ router.post('/login', function(req, res, next) {
             req.flash('error', 'Invalid username or password')
             // save to our user session no username
             // redirect our user to try logging in again
-            req.session.save(function() {
+            // req.session.save(function() 
                 return res.redirect('/auth/login')
-            })
         }
         if (error) {
             return next(error)

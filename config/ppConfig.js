@@ -12,7 +12,7 @@ passport.serializeUser(function(user, cb) {
 passport.deserializeUser(function(id, cb) {
     db.user.findByPk(id).then(function(user) {
         cb(null, user)
-    }).catch(callback)
+    }).catch(cb)
 })
 
 // transport information from database, to server, from server to front end 
@@ -23,14 +23,14 @@ passport.deserializeUser(function(id, cb) {
 passport.use(new LocalStrategy({
     usernameField: 'email',
     passwordField: 'password'
-}, function(email, password, callback) {
+}, function(email, password, cb) {
     db.user.findOne({where: { email }}).then(function(user) {
         if (!user || !user.validPassword(password)) {
-            callback(null, false)
+            cb(null, false)
         } else {
-            callback(null, user)
+            cb(null, user)
         }
-    }).catch(callback)
+    }).catch(cb)
 }
 ))
 
